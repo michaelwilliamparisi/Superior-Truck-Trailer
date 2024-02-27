@@ -1,0 +1,20 @@
+com.example.frontend.app-fragment-1.3.4-0 C:\Users\Michael Parisi\.gradle\caches\transforms-3\029e2d5938949211a382750f8f553015\transformed\fragment-1.3.4\res
+com.example.frontend.app-appcompat-1.3.0-1 C:\Users\Michael Parisi\.gradle\caches\transforms-3\16ebf2a47dcc79736b2a320aca799cf7\transformed\appcompat-1.3.0\res
+com.example.frontend.app-jetified-window-1.0.0-beta04-2 C:\Users\Michael Parisi\.gradle\caches\transforms-3\25cee5f028ac2a6b79fd6278ff5b59e2\transformed\jetified-window-1.0.0-beta04\res
+com.example.frontend.app-jetified-savedstate-1.1.0-3 C:\Users\Michael Parisi\.gradle\caches\transforms-3\5210929c6bf1b640a57ff02b8ff864f4\transformed\jetified-savedstate-1.1.0\res
+com.example.frontend.app-jetified-annotation-experimental-1.1.0-4 C:\Users\Michael Parisi\.gradle\caches\transforms-3\6c0c163cc77ae6c91f9f7dfcd179c29c\transformed\jetified-annotation-experimental-1.1.0\res
+com.example.frontend.app-core-1.6.0-5 C:\Users\Michael Parisi\.gradle\caches\transforms-3\7e9df2ac2213a6bd3cef0f2f27870d79\transformed\core-1.6.0\res
+com.example.frontend.app-jetified-appcompat-resources-1.3.0-6 C:\Users\Michael Parisi\.gradle\caches\transforms-3\8403f286379693ce5929244860d88949\transformed\jetified-appcompat-resources-1.3.0\res
+com.example.frontend.app-lifecycle-runtime-2.3.1-7 C:\Users\Michael Parisi\.gradle\caches\transforms-3\9a249567dcb8025899915ed9a2426636\transformed\lifecycle-runtime-2.3.1\res
+com.example.frontend.app-jetified-window-java-1.0.0-beta04-8 C:\Users\Michael Parisi\.gradle\caches\transforms-3\ae81e06d24c799147c26814497a2a305\transformed\jetified-window-java-1.0.0-beta04\res
+com.example.frontend.app-lifecycle-viewmodel-2.3.1-9 C:\Users\Michael Parisi\.gradle\caches\transforms-3\d486eee418567504419697de2b3eb487\transformed\lifecycle-viewmodel-2.3.1\res
+com.example.frontend.app-jetified-zxing-android-embedded-4.2.0-10 C:\Users\Michael Parisi\.gradle\caches\transforms-3\d926ac5dc3c01419b7f18f169912a410\transformed\jetified-zxing-android-embedded-4.2.0\res
+com.example.frontend.app-debug-11 C:\Users\Michael Parisi\Desktop\Winter 2024\CAPR 6203\Superior\frontend\android\app\src\debug\res
+com.example.frontend.app-main-12 C:\Users\Michael Parisi\Desktop\Winter 2024\CAPR 6203\Superior\frontend\android\app\src\main\res
+com.example.frontend.app-pngs-13 C:\Users\Michael Parisi\Desktop\Winter 2024\CAPR 6203\Superior\frontend\build\app\generated\res\pngs\debug
+com.example.frontend.app-resValues-14 C:\Users\Michael Parisi\Desktop\Winter 2024\CAPR 6203\Superior\frontend\build\app\generated\res\resValues\debug
+com.example.frontend.app-rs-15 C:\Users\Michael Parisi\Desktop\Winter 2024\CAPR 6203\Superior\frontend\build\app\generated\res\rs\debug
+com.example.frontend.app-mergeDebugResources-16 C:\Users\Michael Parisi\Desktop\Winter 2024\CAPR 6203\Superior\frontend\build\app\intermediates\incremental\debug\mergeDebugResources\merged.dir
+com.example.frontend.app-mergeDebugResources-17 C:\Users\Michael Parisi\Desktop\Winter 2024\CAPR 6203\Superior\frontend\build\app\intermediates\incremental\debug\mergeDebugResources\stripped.dir
+com.example.frontend.app-merged_res-18 C:\Users\Michael Parisi\Desktop\Winter 2024\CAPR 6203\Superior\frontend\build\app\intermediates\merged_res\debug
+com.example.frontend.app-packaged_res-19 C:\Users\Michael Parisi\Desktop\Winter 2024\CAPR 6203\Superior\frontend\build\qr_code_scanner\intermediates\packaged_res\debug

@@ -1,0 +1,1 @@
+ C:\\Users\\Michael\ Parisi\\Desktop\\Winter\ 2024\\CAPR\ 6203\\Superior\\frontend\\.dart_tool\\flutter_build\\8893fe4ca19842f96bb02996db634d16\\native_assets.yaml: 

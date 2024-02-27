@@ -1,0 +1,28 @@
+^C:\USERS\MICHAEL PARISI\DESKTOP\WINTER 2024\CAPR 6203\SUPERIOR\FRONTEND\BUILD\WINDOWS\X64\CMAKEFILES\9AF63CB4533B312398652E57CE41F0F9\FLUTTER_WINDOWS.DLL.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E env FLUTTER_ROOT=D:\src\flutter "PROJECT_DIR=C:\Users\Michael Parisi\Desktop\Winter 2024\CAPR 6203\Superior\frontend" FLUTTER_ROOT=D:\src\flutter "FLUTTER_EPHEMERAL_DIR=C:\Users\Michael Parisi\Desktop\Winter 2024\CAPR 6203\Superior\frontend\windows\flutter\ephemeral" "PROJECT_DIR=C:\Users\Michael Parisi\Desktop\Winter 2024\CAPR 6203\Superior\frontend" "FLUTTER_TARGET=C:\Users\Michael Parisi\Desktop\Winter 2024\CAPR 6203\Superior\frontend\lib\main.dart" DART_DEFINES=RkxVVFRFUl9XRUJfQVVUT19ERVRFQ1Q9dHJ1ZQ==,RkxVVFRFUl9XRUJfQ0FOVkFTS0lUX1VSTD1odHRwczovL3d3dy5nc3RhdGljLmNvbS9mbHV0dGVyLWNhbnZhc2tpdC8wNDgxN2M5OWM5ZmQ0OTU2ZjI3NTA1MjA0ZjdlMzQ0MzM1ODEwYWVkLw== DART_OBFUSCATION=false TRACK_WIDGET_CREATION=true TREE_SHAKE_ICONS=false "PACKAGE_CONFIG=C:\Users\Michael Parisi\Desktop\Winter 2024\CAPR 6203\Superior\frontend\.dart_tool\package_config.json" D:/src/flutter/packages/flutter_tools/bin/tool_backend.bat windows-x64 Debug
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\MICHAEL PARISI\DESKTOP\WINTER 2024\CAPR 6203\SUPERIOR\FRONTEND\BUILD\WINDOWS\X64\CMAKEFILES\ADED5C88FB7B46D16A6E75AEA3916721\FLUTTER_ASSEMBLE.RULE
+setlocal
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\MICHAEL PARISI\DESKTOP\WINTER 2024\CAPR 6203\SUPERIOR\FRONTEND\WINDOWS\FLUTTER\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" "-SC:/Users/Michael Parisi/Desktop/Winter 2024/CAPR 6203/Superior/frontend/windows" "-BC:/Users/Michael Parisi/Desktop/Winter 2024/CAPR 6203/Superior/frontend/build/windows/x64" --check-stamp-file "C:/Users/Michael Parisi/Desktop/Winter 2024/CAPR 6203/Superior/frontend/build/windows/x64/flutter/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
