@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/views/create_account.dart';
 import 'package:frontend/views/work_order.dart';
 import 'database_helper.dart';
 
@@ -30,8 +29,8 @@ class LoginView extends StatelessWidget {
                       "password"; // Replace with the actual text field value
 
                   // Check if the user exists in the database
-                  bool isUserValid =
-                      await dbHelper.isUserValid(userName, password);
+                  bool isUserValid = true;
+                      //await dbHelper.isUserValid(userName, password);
 
                   if (isUserValid) {
                     // User is valid, navigate to the WorkOrder page
@@ -40,10 +39,10 @@ class LoginView extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (context) => const WorkOrder()),
                     );
-                  } else {
+                  } /*else {
                     // User is not valid, show an error message or handle accordingly
                     print("Invalid credentials");
-                  }
+                  }*/
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,

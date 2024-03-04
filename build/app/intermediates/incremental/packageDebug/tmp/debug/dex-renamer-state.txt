@@ -1,4 +1,4 @@
-#Mon Feb 26 10:52:58 EST 2024
-base.0=C\:\\Users\\Michael Parisi\\Desktop\\Winter 2024\\CAPR 6203\\Superior\\frontend\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+#Mon Mar 04 11:33:53 EST 2024
+base.0=C\:\\Users\\rdoyl\\Desktop\\School Files\\Semester 6\\CAPR 6203\\Final Project\\Superior-Truck-Trailer\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
 path.0=classes.dex
 renamed.0=classes.dex

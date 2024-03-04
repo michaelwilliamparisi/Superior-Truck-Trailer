@@ -1,7 +1,8 @@
 // Work Order view
 
 import 'package:flutter/material.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class WorkOrder extends StatefulWidget {
   const WorkOrder({Key? key}) : super(key: key);
@@ -12,8 +13,8 @@ class WorkOrder extends StatefulWidget {
 
 class _WorkOrderViewState extends State<WorkOrder> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  late QRViewController controller;
-  String qrCodeResult = "Scan a QR code";
+  //late QRViewController controller;  
+  String _scanBarcodeResult = 'Scan a QR Code';
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +25,9 @@ class _WorkOrderViewState extends State<WorkOrder> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+            ElevatedButton(onPressed:scanQR, child: Text("Start QR Code scan")),
           // QR Scanner Option
-          Expanded(
+          /*Expanded(
             child: QRView(
               key: qrKey,
               onQRViewCreated: (controller) {
@@ -37,10 +39,10 @@ class _WorkOrderViewState extends State<WorkOrder> {
                 });
               },
             ),
-          ),
+          ),*/
           // Display QR Code Result
           Text(
-            qrCodeResult,
+            "$_scanBarcodeResult",
             style: const TextStyle(fontSize: 18.0),
           ),
           // Other Work Order Details
@@ -50,9 +52,25 @@ class _WorkOrderViewState extends State<WorkOrder> {
     );
   }
 
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
+  void scanQR() async {
+
+  String barcodeScanRes;
+
+    try{
+
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+        "#ff6666",
+        "cancel",
+        true,
+        ScanMode.QR
+      );
+
+    }on PlatformException{
+      barcodeScanRes = "Failed to get platform version";
+    }
+
+    setState(() {
+      _scanBarcodeResult = barcodeScanRes;
+    });
   }
 }
