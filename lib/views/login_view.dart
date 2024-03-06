@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/views/create_account.dart';
 import 'package:frontend/views/work_order.dart';
-import 'database_helper.dart';
 
 class LoginView extends StatelessWidget {
-  final DatabaseHelper dbHelper = DatabaseHelper();
-
-  LoginView({Key? key}) : super(key: key);
+  const LoginView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,51 +12,87 @@ class LoginView extends StatelessWidget {
         title: const Text("Login Page"),
       ),
       body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // ... (your existing UI code)
-
-              ElevatedButton(
-                onPressed: () async {
-                  // Fetch the values entered by the user
-                  String userName =
-                      "user_name"; // Replace with the actual text field value
-                  String password =
-                      "password"; // Replace with the actual text field value
-
-                  // Check if the user exists in the database
-                  bool isUserValid = true;
-                      //await dbHelper.isUserValid(userName, password);
-
-                  if (isUserValid) {
-                    // User is valid, navigate to the WorkOrder page
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const WorkOrder()),
-                    );
-                  } /*else {
-                    // User is not valid, show an error message or handle accordingly
-                    print("Invalid credentials");
-                  }*/
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text("Sign In"),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('asset/images/logo.JPG'),
+            Container(
+              height: 150,
+              width: 190,
+              padding: const EdgeInsets.only(top: 40),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(200),
               ),
-
-              // ... (your existing UI code)
-            ],
-          ),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(10),
+              child: TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'User Name',
+                  hintText: 'Enter valid mail id as abc@gmail.com',
+                ),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(10),
+              child: TextField(
+                obscureText: true,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Password',
+                  hintText: 'Enter your secure password',
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const WorkOrder()),
+                );
+                // Add functionality for "Sign In" here
+                // This can include user authentication logic, navigation, etc.
+                print("Sign In pressed");
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+              ),
+              child: const Text("Sign In"),
+            ),
+            TextButton(
+              onPressed: () {
+                // Add functionality for "Forgot Password" here
+                // This can include showing a dialog, navigating to a recovery page, etc.
+                print("Forgot Password pressed");
+              },
+              child: const Text(
+                "Forgot Password?",
+                style: TextStyle(
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CreateView()),
+                );
+                // Add functionality for "Forgot Password" here
+                // This can include showing a dialog, navigating to a recovery page, etc.
+                print("Create account");
+              },
+              child: const Text(
+                "Create Account",
+                style: TextStyle(
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-      resizeToAvoidBottomInset: false,
     );
   }
 }

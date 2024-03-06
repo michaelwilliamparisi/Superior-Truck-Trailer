@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 
 class CreateView extends StatelessWidget {
-  const CreateView({Key? key}) : super(key: key);
+  const CreateView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +98,6 @@ class CreateView extends StatelessWidget {
         ),
       ),
       resizeToAvoidBottomInset: false,
-    );
+      );
   }
 }
