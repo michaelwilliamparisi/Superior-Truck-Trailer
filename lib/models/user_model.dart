@@ -11,4 +11,11 @@ class User {
     required this.password,
   });
 
+  Map<String, dynamic> mapUser() {
+    return {
+      'id': id,
+      'email': email,
+      'password': password,
+    };
+  }
 }

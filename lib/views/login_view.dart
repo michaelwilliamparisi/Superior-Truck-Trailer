@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/services/database_handler.dart';
 import 'package:frontend/views/create_account.dart';
 import 'package:frontend/views/work_order.dart';
 
-class LoginView extends StatelessWidget {
-  const LoginView({super.key});
+import '../models/user_model.dart';
+
+class LoginView extends StatefulWidget {
+  LoginView({super.key});
+
+  final TextEditingController _emailTEC = TextEditingController();
+  final TextEditingController _passwordTEC = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Login Page"),
@@ -24,21 +31,23 @@ class LoginView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(200),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.all(10),
+            Padding(
+              padding: const EdgeInsets.all(10),
               child: TextField(
-                decoration: InputDecoration(
+                controller: _emailTEC,
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'User Name',
                   hintText: 'Enter valid mail id as abc@gmail.com',
                 ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.all(10),
+            Padding(
+              padding: const EdgeInsets.all(10),
               child: TextField(
+                controller: _passwordTEC,
                 obscureText: true,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Password',
                   hintText: 'Enter your secure password',
@@ -46,12 +55,21 @@ class LoginView extends StatelessWidget {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                
+                final String email = _emailTEC.text;
+                final String password = _passwordTEC.text;
+
+                if (await DatabaseHandler.validUser(email, password)){
+                  // ignore: use_build_context_synchronously
+                  Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const WorkOrder()),
-                );
+                  );
+                }
+              
                 // Add functionality for "Sign In" here
+                
                 // This can include user authentication logic, navigation, etc.
                 print("Sign In pressed");
               },
@@ -94,5 +112,11 @@ class LoginView extends StatelessWidget {
         ),
       ),
     );
+  }
+  
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    throw UnimplementedError();
   }
 }
