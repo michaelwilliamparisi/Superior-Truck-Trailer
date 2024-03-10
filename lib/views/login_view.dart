@@ -3,17 +3,35 @@ import 'package:frontend/services/database_handler.dart';
 import 'package:frontend/views/create_account.dart';
 import 'package:frontend/views/work_order.dart';
 
-import '../models/user_model.dart';
+import '../models/employee_model.dart';
 
 class LoginView extends StatefulWidget {
-  LoginView({super.key});
+  const LoginView({super.key});
 
-  final TextEditingController _emailTEC = TextEditingController();
-  final TextEditingController _passwordTEC = TextEditingController();
+  // final TextEditingController _emailTEC = TextEditingController();
+  // final TextEditingController _passwordTEC = TextEditingController();
+
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return LoginViewState();
+  }
+}
+
+class LoginViewState extends State<LoginView> {
+  late TextEditingController _emailTEC;
+  late TextEditingController _passwordTEC;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailTEC = TextEditingController();
+    _passwordTEC = TextEditingController();
+  }
 
   @override
   Widget build(BuildContext context) {
-
+    // Your existing build logic here
     return Scaffold(
       appBar: AppBar(
         title: const Text("Login Page"),
@@ -56,20 +74,21 @@ class LoginView extends StatefulWidget {
             ),
             ElevatedButton(
               onPressed: () async {
-                
                 final String email = _emailTEC.text;
                 final String password = _passwordTEC.text;
 
-                if (await DatabaseHandler.validUser(email, password)){
+                if (await DatabaseHandler.validUser(email, password)) {
                   // ignore: use_build_context_synchronously
+                  _emailTEC.text = "";
+                  _passwordTEC.text = "";
                   Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const WorkOrder()),
+                    context,
+                    MaterialPageRoute(builder: (context) => const WorkOrder()),
                   );
                 }
-              
+
                 // Add functionality for "Sign In" here
-                
+
                 // This can include user authentication logic, navigation, etc.
                 print("Sign In pressed");
               },
@@ -112,11 +131,5 @@ class LoginView extends StatefulWidget {
         ),
       ),
     );
-  }
-  
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    throw UnimplementedError();
   }
 }

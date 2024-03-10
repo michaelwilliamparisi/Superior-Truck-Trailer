@@ -1,12 +1,19 @@
 // Create account view
 
 import 'package:flutter/material.dart';
+import 'package:frontend/models/employee_model.dart';
+import 'package:frontend/services/database_handler.dart';
 
 class CreateView extends StatelessWidget {
   const CreateView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController employeeCodeController = TextEditingController();
+    TextEditingController emailCodeController = TextEditingController();
+    TextEditingController passwordController = TextEditingController();
+    TextEditingController confirmPasswordController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Create Account"),
@@ -36,9 +43,10 @@ class CreateView extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20), // Adjust the height as needed
-              const Padding(
+              Padding(
                 padding: EdgeInsets.all(10),
                 child: TextField(
+                  controller: employeeCodeController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Employee Code',
@@ -46,31 +54,34 @@ class CreateView extends StatelessWidget {
                   ),
                 ),
               ),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.all(10),
                 child: TextField(
+                  controller: emailCodeController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'Username',
-                    hintText: 'Enter your username',
+                    labelText: 'Email',
+                    hintText: 'Enter email',
                   ),
                 ),
               ),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.all(10),
                 child: TextField(
                   obscureText: true,
+                  controller: passwordController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Password',
-                    hintText: 'Enter your password',
+                    hintText: 'Enter password',
                   ),
                 ),
               ),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.all(10),
                 child: TextField(
                   obscureText: true,
+                  controller: confirmPasswordController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Confirm Password',
@@ -79,9 +90,28 @@ class CreateView extends StatelessWidget {
                 ),
               ),
               ElevatedButton(
-                onPressed: () {
-                  // Add functionality for creating an account
+                onPressed: () async {
+                  String employeeCode = employeeCodeController.text;
+                  String email = emailCodeController.text;
+                  String password = passwordController.text;
+                  String confirmPassword = confirmPasswordController.text;
+
                   // This can include validation, storing user data, etc.
+                  if (password == confirmPassword) {
+                    // Create Employee Object
+                    var newUser = Employee(
+                        Employee_code: employeeCode,
+                        Email: email,
+                        Password: password);
+
+                    // Insert user into the database
+                    DatabaseHandler.insertUser(newUser);
+
+                    print('User added to the database');
+                  } else {
+                    print('Passwords do not match');
+                  }
+
                   print("Create Account pressed");
                 },
                 style: ElevatedButton.styleFrom(
@@ -98,6 +128,6 @@ class CreateView extends StatelessWidget {
         ),
       ),
       resizeToAvoidBottomInset: false,
-      );
+    );
   }
 }
