@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:frontend/services/database_handler.dart';
 import 'package:frontend/views/create_account.dart';
 import 'package:frontend/views/work_order.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../models/employee_model.dart';
 
 class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+  final Database database;
 
-  // final TextEditingController _emailTEC = TextEditingController();
-  // final TextEditingController _passwordTEC = TextEditingController();
+  const LoginView({Key? key, required this.database}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return LoginViewState();
   }
 }
@@ -30,8 +29,14 @@ class LoginViewState extends State<LoginView> {
   }
 
   @override
+  void dispose() {
+    _emailTEC.dispose();
+    _passwordTEC.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Your existing build logic here
     return Scaffold(
       appBar: AppBar(
         title: const Text("Login Page"),
@@ -77,20 +82,24 @@ class LoginViewState extends State<LoginView> {
                 final String email = _emailTEC.text;
                 final String password = _passwordTEC.text;
 
-                if (await DatabaseHandler.validUser(email, password)) {
-                  // ignore: use_build_context_synchronously
-                  _emailTEC.text = "";
-                  _passwordTEC.text = "";
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const WorkOrder()),
-                  );
+                if (email.isEmpty || password.isEmpty) {
+                  showFlashError(context, "Email or Password error.");
+                } else {
+                  final Employee? validUser =
+                      await DatabaseHandler.validUser(email, password);
+
+                  if (validUser != null) {
+                    _emailTEC.clear();
+                    _passwordTEC.clear();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const WorkOrder()),
+                    );
+                  } else {
+                    showFlashError(context, 'User is not in the system');
+                  }
                 }
-
-                // Add functionality for "Sign In" here
-
-                // This can include user authentication logic, navigation, etc.
-                print("Sign In pressed");
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
@@ -100,8 +109,6 @@ class LoginViewState extends State<LoginView> {
             TextButton(
               onPressed: () {
                 // Add functionality for "Forgot Password" here
-                // This can include showing a dialog, navigating to a recovery page, etc.
-                print("Forgot Password pressed");
               },
               child: const Text(
                 "Forgot Password?",
@@ -116,9 +123,6 @@ class LoginViewState extends State<LoginView> {
                   context,
                   MaterialPageRoute(builder: (context) => const CreateView()),
                 );
-                // Add functionality for "Forgot Password" here
-                // This can include showing a dialog, navigating to a recovery page, etc.
-                print("Create account");
               },
               child: const Text(
                 "Create Account",
@@ -129,6 +133,14 @@ class LoginViewState extends State<LoginView> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void showFlashError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
       ),
     );
   }

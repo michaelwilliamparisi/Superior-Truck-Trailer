@@ -3,27 +3,28 @@ import 'package:sqflite/sqflite.dart';
 import 'models/employee_model.dart';
 import 'views/login_view.dart';
 import 'services/database_handler.dart';
-//
 
-void main() {
-  runApp(const MainApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final database = await DatabaseHandler.initDatabase();
+  final validUser =
+      await DatabaseHandler.validUser("user@email.com", "password");
+  runApp(MainApp(database: database, validUser: validUser));
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  final Database database;
+  final Employee? validUser;
+
+  const MainApp({Key? key, required this.database, required this.validUser})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    WidgetsFlutterBinding.ensureInitialized();
-
-    // Initialize database
-    DatabaseHandler.getDB();
-
-    DatabaseHandler.deleteUser("");
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginView(), // Use your LoginView widget here
+      home: LoginView(
+          database: database), // Pass the database and validUser to LoginView
     );
   }
 }

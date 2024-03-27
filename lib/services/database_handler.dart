@@ -1,41 +1,48 @@
 import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
-import 'package:flutter/widgets.dart';
+import 'package:path/path.dart' as path;
 import 'dart:async';
+import 'package:path_provider/path_provider.dart';
 
 import '../models/employee_model.dart';
 
-//db variable
-var db;
-
 //main function
 class DatabaseHandler {
-  static Future<Database> get db async => await getDB();
+  static Database? _database;
 
-  static Future<Database> getDB() async {
-    String databasesPath = await getDatabasesPath();
-    String databasePath = join(databasesPath, 'superior_truck_trailer.db');
+  static Future<Database> get database async {
+    if (_database != null) {
+      return _database!;
+    }
+    _database = await initDatabase();
+    return _database!;
+  }
 
-    bool databaseExists = await databaseFactory.databaseExists(databasePath);
+  static Future<Database> initDatabase() async {
+    // Get the application documents directory (using path_provider)
+    //final documentsDirectory = "asset/database/superior_truck_trailer.db";
+    final dbpath = "asset/database/superior_truck_trailer.db";
 
-    // Check if database already exists
-    if (!databaseExists) {
-      // Copy the asset database to the writable directory
-      ByteData data =
-          await rootBundle.load('asset/database/superior_truck_trailer.db');
-      List<int> bytes = data.buffer.asUint8List();
-      await File(databasePath).writeAsBytes(bytes, flush: true);
+    print("Database path: $dbpath"); // Fixed typo in path variable name
+
+    if (await databaseExists(dbpath)) {
+      print("Database already exists");
+    } else {
+      // Copy the database from the assets directory (if needed)
+      final data =
+          await rootBundle.load("asset/database/superior_truck_trailer.db");
+      final bytes =
+          data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+      await File(dbpath).writeAsBytes(bytes, flush: true);
+      print("Database copied to $dbpath");
     }
 
-    return openDatabase(
-      databasePath,
-      onCreate: (db, ver) {
-        return db.execute('''
+    return await openDatabase(dbpath, version: 1,
+        onCreate: (db, version) async {
+      // Your database creation logic here (if needed)
+      ('''
           CREATE TABLE Job (
               Job_code TEXT PRIMARY KEY,
               Job_code_description TEXT,
@@ -84,19 +91,17 @@ class DatabaseHandler {
               Trailer_num TEXT REFERENCES Trailer_Inventory(Trailer_num)
           );
         ''');
-      },
-      //version is used to execute onCreate and make database upgrades and downgrades.
-      version: 1,
-    );
+    });
   }
 
 //Insert
   //the 'future' keyword defines a function that works asynchronously
   static Future<void> insertUser(Employee user) async {
+    DatabaseHandler.initDatabase();
     //local database variable
-    final curDB = await db;
+    final curDB = _database;
     //insert function
-    await curDB.insert(
+    await curDB?.insert(
       //first parameter is Table name
       'EMP_Table',
       //second parameter is data to be inserted
@@ -108,7 +113,7 @@ class DatabaseHandler {
 
 //Read
   static Future<List<Employee>> getUsers() async {
-    final curDB = await db;
+    final curDB = await database;
     //query to get all users into a Map list
     final List<Map<String, dynamic>> userMaps = await curDB.query('EMP_Table');
     //converting the map list to user list
@@ -123,30 +128,28 @@ class DatabaseHandler {
   }
 
 //Read Valid User
-  static Future<bool> validUser(String email, String password) async {
-    final curDB = await db;
-    //query to get all users into a Map list
-    final List<Map<String, dynamic>> userMaps = await curDB.query('EMP_Table',
+  static Future<Employee?> validUser(String email, String password) async {
+    final curDB = await database;
+    // Query to get the user with the provided email and password
+    List<Map<String, dynamic>> userMaps = await curDB.query('EMP_Table',
         where: 'Email = ? AND Password = ?', whereArgs: [email, password]);
-    //converting the map list to user list
 
-    if (List.generate(userMaps.length, (i) {
-          return Employee(
-            Employee_code: userMaps[i]['Employee_code'],
-            Email: userMaps[i]['Email'],
-            Password: userMaps[i]['Password'],
-          );
-        }).length ==
-        1) {
-      return true;
+    // If user found, return Employee object, else return null
+    if (userMaps.isNotEmpty) {
+      return Employee(
+        Employee_code: userMaps[0]['Employee_code'],
+        Email: userMaps[0]['Email'],
+        Password: userMaps[0]['Password'],
+        // Add other fields as needed
+      );
     } else {
-      return false;
+      return null;
     }
   }
 
 //Update
   static Future<void> updateUser(Employee user) async {
-    final curDB = await db;
+    final curDB = await database;
     //update a specific user
     await curDB.update(
       //table name
@@ -162,7 +165,7 @@ class DatabaseHandler {
 
 //Delete
   static Future<void> deleteUser(String Email) async {
-    final curDB = await db;
+    final curDB = await database;
     // Delete operation
     await curDB.delete(
       //table name

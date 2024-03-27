@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "349289979972",
+    "project_id": "superior-truck-and-trailer",
+    "storage_bucket": "superior-truck-and-trailer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:349289979972:android:1c690a8758d092575d1c11",
+        "android_client_info": {
+          "package_name": "com.example.frontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6SaG3u0PmPyCZLVU-kEnMZI_9QMIHg3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

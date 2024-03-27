@@ -1,6 +1,11 @@
 # This is a generated file; do not edit or check into version control.
 flutter_barcode_scanner=C:\\Users\\Michael Parisi\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\flutter_barcode_scanner-2.0.0\\
 flutter_plugin_android_lifecycle=C:\\Users\\Michael Parisi\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\flutter_plugin_android_lifecycle-2.0.17\\
+path_provider=C:\\Users\\Michael Parisi\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\path_provider-2.1.2\\
+path_provider_android=C:\\Users\\Michael Parisi\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\path_provider_android-2.2.2\\
+path_provider_foundation=C:\\Users\\Michael Parisi\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\path_provider_foundation-2.3.2\\
+path_provider_linux=C:\\Users\\Michael Parisi\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\path_provider_linux-2.2.1\\
+path_provider_windows=C:\\Users\\Michael Parisi\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\path_provider_windows-2.2.1\\
 permission_handler=C:\\Users\\Michael Parisi\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\permission_handler-11.3.0\\
 permission_handler_android=C:\\Users\\Michael Parisi\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\permission_handler_android-12.0.5\\
 permission_handler_apple=C:\\Users\\Michael Parisi\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\permission_handler_apple-9.4.0\\
