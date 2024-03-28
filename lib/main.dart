@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'models/employee_model.dart';
 import 'views/login_view.dart';
-import 'services/database_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

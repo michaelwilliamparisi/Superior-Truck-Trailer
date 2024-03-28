@@ -88,22 +88,25 @@ class LoginViewState extends State<LoginView> {
                 final String password = _passwordTEC.text;
 
                 // checking if text fields are empty
-                if (_emailTEC.text.isEmpty || _passwordTEC.text.isEmpty) {
+                if (email.isEmpty || password.isEmpty) {
                   showFlashError(context, "Email or Password error.");
+                  return;
+                }
+
+                final bool isValid =
+                    await DatabaseHandler.validUser(email, password);
+
+                if (isValid) {
+                  _emailTEC.text = "";
+                  _passwordTEC.text = "";
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const WorkOrder()),
+                  );
                 } else {
-                  if (await DatabaseHandler.validUser(email, password) !=
-                      null) {
-                    // ignore: use_build_context_synchronously
-                    _emailTEC.text = "";
-                    _passwordTEC.text = "";
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const WorkOrder()),
-                    );
-                  } else {
-                    showFlashError(context, 'User is not in the system');
-                  }
+                  showFlashError(context, 'Invalid Email or Password.');
+                  _emailTEC.text = "";
+                  _passwordTEC.text = "";
                 }
 
                 // Add functionality for "Sign In" here
