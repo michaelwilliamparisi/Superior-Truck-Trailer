@@ -1,5 +1,6 @@
 // Create account view
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/models/employee_model.dart';
 import 'package:frontend/services/database_handler.dart';
@@ -105,7 +106,8 @@ class CreateView extends StatelessWidget {
                         Password: password);
 
                     // Insert user into the database
-                    DatabaseHandler.insertUser(newUser);
+                    DatabaseHandler.createUser(
+                        email: email, password: password);
 
                     print('User added to the database');
                   } else {
