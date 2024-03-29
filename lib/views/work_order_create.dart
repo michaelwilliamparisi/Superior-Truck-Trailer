@@ -1,27 +1,39 @@
 // Work Order view
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:frontend/models/employee_model.dart';
+import 'package:frontend/models/trailer_model.dart';
+import 'package:frontend/models/work_order_model.dart';
+import 'package:frontend/services/database_handler.dart';
+import 'package:frontend/views/work_order_list.dart';
 
-class WorkOrder extends StatefulWidget {
-  const WorkOrder({super.key});
+class CreateWorkOrder extends StatefulWidget {
+  const CreateWorkOrder({super.key, required this.trailer, required this.workOrders, required this.employeeCode});  
+
+  final Trailer trailer;
+  final List<WorkOrders> workOrders;
+  final String employeeCode;
 
   @override
-  _WorkOrderViewState createState() => _WorkOrderViewState();
+  State<CreateWorkOrder> createState() => _MyOrderState(trailer, workOrders, employeeCode);
 }
 
-class _WorkOrderViewState extends State<WorkOrder> {
+class _MyOrderState extends State<CreateWorkOrder> {
+  _MyOrderState(this.trailer, this.workOrders, this.employeeCode);
+
+  final Trailer trailer;
+  final List<WorkOrders> workOrders;
+  final String employeeCode;
   final TextEditingController _jobCodesTEC = TextEditingController();
   final TextEditingController _partsTEC = TextEditingController();
   final TextEditingController _labourTEC = TextEditingController();
 
-  //Trailer ID (Read Only)
-  final String trailerID = "";
   //Company Name (Read Only)
   final String companyName = "";
   //Work Order ID (Read Only)
   final String workOrderID = "";
+  //Status
+  final String status = "P";
   //job code(s)
   final String jobCodes = "";
   //Parts required
@@ -43,34 +55,23 @@ class _WorkOrderViewState extends State<WorkOrder> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('asset/images/logo.JPG'),
-            Container(
-              height: 150,
-              width: 190,
-              padding: const EdgeInsets.only(top: 40),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(200),
-              ),
-            ),
-            ElevatedButton(
-                onPressed: scanQR, child: Text("Start QR Code scan")),
             Padding(
               padding: EdgeInsets.all(10),
-              child: Text(trailerID),
+              child: Text("Trailer ID: ${trailer.trailerId}"),
             ),
             Padding(
               padding: EdgeInsets.all(10),
-              child: Text(companyName),
+              child: Text("Company Name: ${trailer.companyName}"),
             ),
-            Padding(
+            const Padding(
               padding: EdgeInsets.all(10),
-              child: Text(workOrderID),
+              child: Text("Work Order ID: To Be Generated"),
             ),
             Padding(
               padding: const EdgeInsets.all(10),
               child: TextField(
                 controller: _jobCodesTEC,
-                obscureText: true,
+                obscureText: false,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Job Codes - Seperated By Comma',
@@ -82,7 +83,7 @@ class _WorkOrderViewState extends State<WorkOrder> {
               padding: const EdgeInsets.all(10),
               child: TextField(
                 controller: _partsTEC,
-                obscureText: true,
+                obscureText: false,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Required Parts',
@@ -93,7 +94,7 @@ class _WorkOrderViewState extends State<WorkOrder> {
               padding: const EdgeInsets.all(10),
               child: TextField(
                 controller: _labourTEC,
-                obscureText: true,
+                obscureText: false,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Labour Cost',
@@ -106,7 +107,16 @@ class _WorkOrderViewState extends State<WorkOrder> {
                 final String parts = _partsTEC.text;
                 final String labour = _labourTEC.text;
 
-                print("Create Work Order pressed");
+                int workOrderLength = await DatabaseHandler.TotalWorkOrders(trailer.trailerId);
+
+                WorkOrders workOrder = WorkOrders(workOrderNum: '${trailer.trailerId}WO${workOrderLength.toString()}', empNum: employeeCode, trailerNum: trailer.trailerId, companyName: trailer.companyName, status: status, jobCodes: jobCodes, parts: parts, labour: double.parse(labour));
+
+                DatabaseHandler.AddWorkOrder(trailer, workOrder);
+
+                workOrders.add(workOrder);
+
+                Navigator.push(context, MaterialPageRoute(builder: (context) => WorkOrderList(workOrders: workOrders, trailer: trailer, employeeCode: employeeCode,),));
+                
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
@@ -117,20 +127,5 @@ class _WorkOrderViewState extends State<WorkOrder> {
         ),
       ),
     );
-  }
-
-  void scanQR() async {
-    String barcodeScanRes;
-
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          "#ff6666", "cancel", true, ScanMode.QR);
-    } on PlatformException {
-      barcodeScanRes = "Failed to get platform version";
-    }
-
-    setState(() {
-      _scanBarcodeResult = barcodeScanRes;
-    });
   }
 }

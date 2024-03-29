@@ -101,9 +101,11 @@ class CreateView extends StatelessWidget {
                   if (password == confirmPassword) {
                     // Create Employee Object
                     var newUser = Employee(
-                        Employee_code: employeeCode,
-                        Email: email,
-                        Password: password);
+                        employeeCode: employeeCode,
+                        email: email,
+                        password: password,
+                        employeeStatus: 'E',
+                        );
 
                     // Insert user into the database
                     DatabaseHandler.createUser(

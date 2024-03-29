@@ -1,8 +1,12 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:frontend/models/employee_model.dart';
+import 'package:frontend/models/trailer_model.dart';
+import 'package:frontend/models/work_order_model.dart';
 
 //main function
 class DatabaseHandler {
+  
   static Future createUser(
       {required String email, required String password}) async {
     final docUser = FirebaseFirestore.instance.collection("users").doc();
@@ -15,7 +19,49 @@ class DatabaseHandler {
     await docUser.set(json);
   }
 
-  static Future<bool> validUser(String email, String password) async {
+  static Future<bool> AddWorkOrder(Trailer trailer, WorkOrders workOrders) async {
+
+    final docWorkOrder = FirebaseFirestore.instance.collection("trailers").doc(trailer.trailerId).collection("WorkOrders").doc(workOrders.workOrderNum);
+
+    final json = {
+      'workOrderNum': workOrders.workOrderNum,
+      'empNum': workOrders.empNum,
+      'trailerNum': workOrders.trailerNum,
+      'companyName': workOrders.companyName,
+      'status': workOrders.status,
+      'jobCodes': workOrders.jobCodes,
+      'parts': workOrders.parts,
+      'labour': workOrders.labour,
+    };
+
+    await docWorkOrder.set(json);
+
+    return true;
+
+  }
+
+  static bool UpdateWorkOrder(Trailer trailer, WorkOrders workOrder) {
+    
+    try {
+
+      DocumentReference documentReference = FirebaseFirestore.instance.collection('trailers').doc(workOrder.trailerNum).collection('WorkOrders').doc(workOrder.workOrderNum);
+
+      documentReference.update({
+        'jobCodes': workOrder.jobCodes,
+        'parts': workOrder.parts,
+        'labour': workOrder.labour
+      });
+
+      return true;
+
+    } catch (e) {
+      return false;
+    }
+
+  }
+
+  static Future<Employee> validUser(String email, String password) async {
+    
     final users = await FirebaseFirestore.instance
         .collection("users")
         .where('email', isEqualTo: email)
@@ -23,21 +69,57 @@ class DatabaseHandler {
 
     if (users.docs.isNotEmpty) {
       // Check if a user with the provided email exists
-      final userDoc =
-          users.docs.first; // Assuming only one user with the email exists
-      final userMap = userDoc.data() as Map<String, dynamic>; // Cast to Map
-
-      // **Security Note:** It's highly recommended to **NOT** store passwords in plain text. Instead, use a secure hashing algorithm like bcrypt or scrypt before storing them in the database. During login, hash the user-provided password and compare it with the hashed password stored in the database.
-
-      // **Here's an example (replace with actual hashing implementation):**
-      // final String hashedPassword = hashPassword(password); // Implement secure hashing
-      // return userMap['password'] == hashedPassword;
-
-      // **Temporary placeholder (NOT SECURE):** This is for demonstration purposes only. Remove before production use.
-      return userMap['password'] ==
-          password; // This is not secure, replace with secure hashing
+      DocumentSnapshot documentSnapshot = users.docs.first; // Assuming only one user with the email exists
+      print('Enter ');
+      return Employee.fromFirestore(documentSnapshot);
+      
     } else {
-      return false; // No user found with the provided email
+      return Employee(employeeCode: '-1', email: '-1', password: 'P', employeeStatus: 'N/A'); // No user found with the provided email
     }
   }
+
+  static Future<Trailer> FindTrailer(String trailerId) async {
+
+      final trailerDoc;
+      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+        .collection("trailers").doc(trailerId).get();
+
+      return Trailer.fromFirestore(documentSnapshot);
+
+  }
+
+  static Future<List<WorkOrders>> FindTrailerOrders(String trailerId) async {
+    
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('trailers')
+        .doc(trailerId)
+        .collection('WorkOrders')
+        .where('status', isNotEqualTo: 'A')
+        .get();
+    return snapshot.docs.map((doc) => WorkOrders.fromFirestore(doc)).toList();
+  }
+
+  static Future<void> deleteWorkOrder(String trailerId, String workOrderId,) async {
+
+
+      DocumentReference documentReference = FirebaseFirestore.instance.collection('trailers').doc(trailerId).collection('WorkOrders').doc(workOrderId);
+
+      documentReference.update({
+        'status': 'D',
+      });
+
+  }
+
+  static Future<int> TotalWorkOrders(String trailerId) async {
+
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('trailers')
+        .doc(trailerId)
+        .collection('WorkOrders')
+        .get();
+    List<WorkOrders> workOrders =  snapshot.docs.map((doc) => WorkOrders.fromFirestore(doc)).toList();
+
+    return workOrders.length;
+  }
+
 }

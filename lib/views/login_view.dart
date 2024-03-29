@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/services/database_handler.dart';
 import 'package:frontend/views/create_account.dart';
-import 'package:frontend/views/work_order.dart';
+import 'package:frontend/views/work_order_search.dart';
 
 import '../models/employee_model.dart';
 
@@ -93,15 +93,14 @@ class LoginViewState extends State<LoginView> {
                   return;
                 }
 
-                final bool isValid =
-                    await DatabaseHandler.validUser(email, password);
+                final Employee loginEmployee = await DatabaseHandler.validUser(email, password);
 
-                if (isValid) {
+                if (loginEmployee.employeeCode != '-1') {
                   _emailTEC.text = "";
                   _passwordTEC.text = "";
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const WorkOrder()),
+                    MaterialPageRoute(builder: (context) => WorkOrderSearch(employeeCode: loginEmployee.employeeCode,)),
                   );
                 } else {
                   showFlashError(context, 'Invalid Email or Password.');

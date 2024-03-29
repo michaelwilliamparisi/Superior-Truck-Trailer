@@ -1,24 +1,40 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Employee {
-  final String Employee_code;
-  final String Email;
-  final String Password;
+  final String employeeCode;
+  final String email;
+  final String password;
+  final String employeeStatus;
   // final String Fname;
   // final String Lname;
 
   const Employee({
-    required this.Employee_code,
-    required this.Email,
-    required this.Password,
+    required this.employeeCode,
+    required this.email,
+    required this.password,
+    required this.employeeStatus,
     // required this.Fname,
     // required this.Lname,
   });
 
   Map<String, dynamic> mapUser() {
     return {
-      'Employee_code': Employee_code,
-      'Email': Email,
-      'Password': Password,
+      'employeeCode': employeeCode,
+      'email': email,
+      'password': password,
+      'employeeStatus': employeeStatus,
       // 'Fname': Fname,
     };
   }
+
+  factory Employee.fromFirestore(DocumentSnapshot doc) {
+    Map data = doc.data() as Map<String, dynamic>;
+    return Employee(
+      employeeCode: data['employeeCode'] ?? '-1',
+      email: data['email'] ?? '-1',
+      password: data['password'] ?? 'P',
+      employeeStatus: data['employeeStatus'] ?? 'E'
+    );
+  }
+
 }
