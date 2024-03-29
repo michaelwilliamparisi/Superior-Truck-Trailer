@@ -40,6 +40,25 @@ class DatabaseHandler {
 
   }
 
+  static Future<bool> AddTrailer(Trailer trailer) async {
+
+    final docWorkOrder = FirebaseFirestore.instance.collection("trailers").doc(trailer.trailerId);
+
+    final json = {
+      'trailerId': trailer.trailerId,
+      'companyName': trailer.companyName,
+      'length': trailer.length,
+      'width': trailer.width,
+      'height': trailer.height,
+      'weight': trailer.weight,
+    };
+
+    await docWorkOrder.set(json);
+
+    return true;
+
+  }
+
   static bool UpdateWorkOrder(Trailer trailer, WorkOrders workOrder) {
     
     try {
@@ -80,11 +99,19 @@ class DatabaseHandler {
 
   static Future<Trailer> FindTrailer(String trailerId) async {
 
+    try {
+
       final trailerDoc;
       DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
         .collection("trailers").doc(trailerId).get();
 
       return Trailer.fromFirestore(documentSnapshot);
+
+    }catch (e) {
+
+      return Trailer(trailerId: '-1', companyName: '', length: 0.0, width: 0.0, height: 0.0, weight: 0.0);
+
+    }
 
   }
 

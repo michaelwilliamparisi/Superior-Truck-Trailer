@@ -7,6 +7,7 @@ import 'package:frontend/models/employee_model.dart';
 import 'package:frontend/models/trailer_model.dart';
 import 'package:frontend/models/work_order_model.dart';
 import 'package:frontend/services/database_handler.dart';
+import 'package:frontend/views/trailer_create.dart';
 import 'package:frontend/views/work_order_list.dart';
 
 class WorkOrderSearch extends StatefulWidget {
@@ -31,6 +32,16 @@ class _WorkOrderViewState extends State<WorkOrderSearch> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   //late QRViewController controller;
   String _scanBarcodeResult = 'Scan a QR Code';
+
+  // Error handling function
+  @override
+  void showFlashError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +76,7 @@ class _WorkOrderViewState extends State<WorkOrderSearch> {
               ),
             ),
             ElevatedButton(
-              onPressed: () async {
+              onPressed: () async { 
                 final String trailerId = _trailerIdTEC.text;
                 TrailerSearch(trailerId);
               },
@@ -107,13 +118,42 @@ class _WorkOrderViewState extends State<WorkOrderSearch> {
 
       //Query Database
       Trailer trailer = await DatabaseHandler.FindTrailer(trailerId);
-      List<WorkOrders> workOrders = await DatabaseHandler.FindTrailerOrders(trailerId);
+
+      print(trailer.trailerId);
 
       if (trailer.trailerId == '-1') {
 
-        //Call Error Function
+        print("Entered if statement");
+
+        //Call Error Function 
+        showDialog<String>(
+        context: context,
+        builder: (BuildContext context) =>AlertDialog(
+          title: const Text("Trailer Id Not Found"),
+          content: const Text("Would you like to create this trailer Id?"),
+          actions: <Widget>[
+            TextButton(onPressed: () {
+
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CreateTrailer(trailerId: trailerId, employeeCode: employeeCode)));
+
+              }, 
+              child: const Text("Yes"),
+            ),
+            TextButton(onPressed: () {
+
+                Navigator.pop(context, 'No');
+                showFlashError(context, 'Invalid Trailer ID');
+
+              }, 
+              child: const Text("No"),
+            ),
+          ],
+          ));
+          print("Exiting if statement");
 
       } else {
+
+        List<WorkOrders> workOrders = await DatabaseHandler.FindTrailerOrders(trailerId);
 
         Navigator.push(context, MaterialPageRoute(builder: (context) => WorkOrderList(workOrders: workOrders, trailer: trailer, employeeCode: employeeCode),));
       
