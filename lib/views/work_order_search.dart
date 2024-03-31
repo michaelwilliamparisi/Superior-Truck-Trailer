@@ -123,8 +123,6 @@ class _WorkOrderViewState extends State<WorkOrderSearch> {
 
       if (trailer.trailerId == '-1') {
 
-        print("Entered if statement");
-
         //Call Error Function 
         showDialog<String>(
         context: context,
@@ -149,7 +147,6 @@ class _WorkOrderViewState extends State<WorkOrderSearch> {
             ),
           ],
           ));
-          print("Exiting if statement");
 
       } else {
 

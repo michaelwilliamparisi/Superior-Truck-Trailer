@@ -62,9 +62,30 @@ class _MyWorkOrderState extends State<WorkOrderList> {
                       ),
                       child: Image.asset('asset/images/delete.png', width: 30, height: 30,),
                       onPressed: () {
-                        DatabaseHandler.deleteWorkOrder(trailer.trailerId, workOrders[index].workOrderNum);
-                        workOrders.removeAt(index);
-                        setState(() {_MyWorkOrderState(workOrders, trailer, employeeCode);});
+
+                        showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) =>AlertDialog(
+                            title: Text("Delete Work Order ${workOrders[index].workOrderNum}"),
+                            content: const Text("Are you sure you want to delete this Work Order?"),
+                            actions: <Widget>[
+                              TextButton(onPressed: () {
+                                  DatabaseHandler.deleteWorkOrder(trailer.trailerId, workOrders[index].workOrderNum);
+                                  workOrders.removeAt(index);
+                                  setState(() {_MyWorkOrderState(workOrders, trailer, employeeCode);});
+                                }, 
+                                child: const Text("Yes"),
+                              ),
+                              TextButton(onPressed: () {
+
+                                  Navigator.pop(context, 'No');
+
+                                }, 
+                                child: const Text("No"),
+                              ),
+                            ],
+                          )
+                        );
                       },
                     ),
                   shape: const Border(top: BorderSide()),
