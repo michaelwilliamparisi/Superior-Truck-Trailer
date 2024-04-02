@@ -9,7 +9,8 @@ import 'package:frontend/views/work_order_list.dart';
 import 'package:frontend/views/work_order_search.dart';
 
 class CreateTrailer extends StatefulWidget {
-  const CreateTrailer({super.key, required this.trailerId, required this.employeeCode});  
+  const CreateTrailer(
+      {super.key, required this.trailerId, required this.employeeCode});
 
   final String trailerId;
   final String employeeCode;
@@ -46,8 +47,11 @@ class _MyOrderState extends State<CreateTrailer> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Work Order View"),
-      ),
+          title: const Text("Work Order View"),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context),
+          )),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -120,25 +124,32 @@ class _MyOrderState extends State<CreateTrailer> {
                 final String companyName = _companyNameTEC.text;
 
                 try {
-                
                   final double length = double.parse(_lengthTEC.text);
                   final double width = double.parse(_widthTEC.text);
                   final double height = double.parse(_heightTEC.text);
                   final double weight = double.parse(_weightTEC.text);
 
-                Trailer trailer = Trailer(trailerId: trailerId, companyName: companyName, length: length, width: width, height: height, weight: weight);
+                  Trailer trailer = Trailer(
+                      trailerId: trailerId,
+                      companyName: companyName,
+                      length: length,
+                      width: width,
+                      height: height,
+                      weight: weight);
 
-                DatabaseHandler.AddTrailer(trailer);
+                  DatabaseHandler.AddTrailer(trailer);
 
-                Navigator.push(context, MaterialPageRoute(builder: (context) => WorkOrderSearch(employeeCode: employeeCode,),));
-                
-                }catch (e) {
-
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WorkOrderSearch(
+                          employeeCode: employeeCode,
+                        ),
+                      ));
+                } catch (e) {
                   //Error Handling
                   showFlashError(context, "Measurements Must Be Numeric");
-
                 }
-                
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,

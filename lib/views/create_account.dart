@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/models/employee_model.dart';
 import 'package:frontend/services/database_handler.dart';
+import 'package:frontend/views/login_view.dart';
+import 'package:path/path.dart';
 
 class CreateView extends StatelessWidget {
   const CreateView({super.key});
@@ -97,22 +99,57 @@ class CreateView extends StatelessWidget {
                   String password = passwordController.text;
                   String confirmPassword = confirmPasswordController.text;
 
+                  if (employeeCode.isEmpty ||
+                      email.isEmpty ||
+                      password.isEmpty) {
+                    showFlashError(
+                        context, "Employee code, email, password error.");
+                    employeeCodeController.text = "";
+                    emailCodeController.text = "";
+                    passwordController.text = "";
+                    confirmPasswordController.text = "";
+                  }
+                  // Validate email format
+                  final emailPattern =
+                      RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                  if (!emailPattern.hasMatch(email)) {
+                    // If email format is invalid, show an error message
+
+                    showFlashError(context, "Not a valid email.");
+                    emailCodeController.text = "";
+
+                    return; // Exit the function early
+                  }
+                  if (passwordController.text !=
+                      confirmPasswordController.text) {
+                    showFlashError(context,
+                        "The password and Confirm Password do not match.");
+                    passwordController.text = "";
+                    confirmPasswordController.text = "";
+                  }
                   // This can include validation, storing user data, etc.
                   if (password == confirmPassword) {
                     // Create Employee Object
-                    var newUser = Employee(
-                        employeeCode: employeeCode,
-                        email: email,
-                        password: password,
-                        employeeStatus: 'E',
-                        );
+                    Employee employee = Employee(
+                      employeeCode: employeeCode,
+                      email: email,
+                      password: password,
+                      employeeStatus: 'E',
+                    );
 
                     // Insert user into the database
-                    DatabaseHandler.createUser(
-                        email: email, password: password);
+                    DatabaseHandler.createUser(employee: employee);
+
+                    Navigator.pop(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginView()),
+                    );
 
                     print('User added to the database');
                   } else {
+                    confirmPassword == "";
+                    password == "";
                     print('Passwords do not match');
                   }
 
@@ -132,6 +169,14 @@ class CreateView extends StatelessWidget {
         ),
       ),
       resizeToAvoidBottomInset: false,
+    );
+  }
+
+  void showFlashError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
     );
   }
 }

@@ -7,16 +7,21 @@ import 'package:frontend/services/database_handler.dart';
 import 'package:frontend/views/work_order_list.dart';
 
 class EditWorkOrder extends StatefulWidget {
-  const EditWorkOrder({super.key, required this.trailer, required this.workOrders, required this.index, required this.employeeCode});
+  const EditWorkOrder(
+      {super.key,
+      required this.trailer,
+      required this.workOrders,
+      required this.index,
+      required this.employeeCode});
 
   final Trailer trailer;
   final List<WorkOrders> workOrders;
   final int index;
   final String employeeCode;
-  
 
   @override
-  State<EditWorkOrder> createState() => _MyOrderState(trailer, workOrders, index, employeeCode);
+  State<EditWorkOrder> createState() =>
+      _MyOrderState(trailer, workOrders, index, employeeCode);
 }
 
 class _MyOrderState extends State<EditWorkOrder> {
@@ -53,95 +58,129 @@ class _MyOrderState extends State<EditWorkOrder> {
     });
   }
 
+  void showFlashError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Work Order View"),
       ),
-      body: isLoading ? const CircularProgressIndicator() : SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Text("Trailer Identification Number: ${trailer.trailerId}"),
-            ),
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Text("Company Name: ${trailer.companyName}"),
-            ),
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Text("Work Order ID: ${workOrders[index].workOrderNum}"),
-            ),
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Text("Created by Employee: $employeeCode"),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: _jobCodesTEC,
-                obscureText: false,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Job Codes - Seperated By Comma',
-                  hintText: 'Seperate By Comma Ex. 13,4,16,10',
-                ),
+      body: isLoading
+          ? const CircularProgressIndicator()
+          : SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                        "Trailer Identification Number: ${trailer.trailerId}"),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text("Company Name: ${trailer.companyName}"),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                        "Work Order ID: ${workOrders[index].workOrderNum}"),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text("Created by Employee: $employeeCode"),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: TextField(
+                      controller: _jobCodesTEC,
+                      obscureText: false,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Job Codes - Seperated By Comma',
+                        hintText: 'Seperate By Comma Ex. 13,4,16,10',
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: TextField(
+                      controller: _partsTEC,
+                      obscureText: false,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Required Parts',
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: TextField(
+                      controller: _labourTEC,
+                      obscureText: false,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Labour Cost',
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final String jobCodes = _jobCodesTEC.text;
+                      final String parts = _partsTEC.text;
+                      final String labour = _labourTEC.text;
+
+                      // Check if any of the text fields are empty
+                      if (jobCodes.isEmpty || parts.isEmpty || labour.isEmpty) {
+                        // Show error message
+                        showFlashError(context, 'Please fill in all fields.');
+
+                        // Clear the text fields
+                        _jobCodesTEC.clear();
+                        _partsTEC.clear();
+                        _labourTEC.clear();
+
+                        return; // Exit the function
+                      }
+
+                      workOrders[index].jobCodes = jobCodes;
+                      workOrders[index].parts = parts;
+                      workOrders[index].labour = double.parse(labour);
+
+                      bool updated = DatabaseHandler.UpdateWorkOrder(
+                          trailer, workOrders[index]);
+
+                      if (updated) {
+                        print("Work Order Updated");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WorkOrderList(
+                              workOrders: workOrders,
+                              trailer: trailer,
+                              employeeCode: employeeCode,
+                            ),
+                          ),
+                        );
+                      } else {
+                        //Error Handling
+                        print("Couldn't find Work Order");
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                    ),
+                    child: const Text("Update Work Order"),
+                  ),
+                ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: _partsTEC,
-                obscureText: false,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Required Parts',
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: _labourTEC,
-                obscureText: false,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Labour Cost',
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final String jobCodes = _jobCodesTEC.text;
-                final String parts = _partsTEC.text;
-                final String labour = _labourTEC.text;
-
-                workOrders[index].jobCodes = jobCodes;
-                workOrders[index].parts = parts;
-                workOrders[index].labour = double.parse(labour);
-
-                bool updated = DatabaseHandler.UpdateWorkOrder(trailer, workOrders[index]);
-
-                if (updated) {
-                  print("Work Order Updated");
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => WorkOrderList(workOrders: workOrders, trailer: trailer, employeeCode: employeeCode,),));
-                } else {
-                  //Error Handling
-                  print("Couldn't find Work Order");
-                }
-
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-              ),
-              child: const Text("Update Work Order"),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

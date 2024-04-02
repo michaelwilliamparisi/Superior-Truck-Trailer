@@ -48,6 +48,7 @@ class _WorkOrderViewState extends State<WorkOrderSearch> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Work Order Search"),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -76,7 +77,7 @@ class _WorkOrderViewState extends State<WorkOrderSearch> {
               ),
             ),
             ElevatedButton(
-              onPressed: () async { 
+              onPressed: () async {
                 final String trailerId = _trailerIdTEC.text;
                 TrailerSearch(trailerId);
               },
@@ -105,59 +106,58 @@ class _WorkOrderViewState extends State<WorkOrderSearch> {
   }
 
   void TrailerSearch(String trailerId) async {
-
     if (trailerId == '-1') {
-
       //Call Error Function
-
     } else if (trailerId == '-2') {
-
       //Call Error Function
-
-    }else {
-
+    } else {
       //Query Database
       Trailer trailer = await DatabaseHandler.FindTrailer(trailerId);
 
       print(trailer.trailerId);
 
       if (trailer.trailerId == '-1') {
-
-        //Call Error Function 
+        //Call Error Function
         showDialog<String>(
-        context: context,
-        builder: (BuildContext context) =>AlertDialog(
-          title: const Text("Trailer Id Not Found"),
-          content: const Text("Would you like to create this trailer Id?"),
-          actions: <Widget>[
-            TextButton(onPressed: () {
-
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CreateTrailer(trailerId: trailerId, employeeCode: employeeCode)));
-
-              }, 
-              child: const Text("Yes"),
-            ),
-            TextButton(onPressed: () {
-
-                Navigator.pop(context, 'No');
-                showFlashError(context, 'Invalid Trailer ID');
-
-              }, 
-              child: const Text("No"),
-            ),
-          ],
-          ));
-
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                  title: const Text("Trailer Id Not Found"),
+                  content:
+                      const Text("Would you like to create this trailer Id?"),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CreateTrailer(
+                                    trailerId: trailerId,
+                                    employeeCode: employeeCode)));
+                      },
+                      child: const Text("Yes"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context, 'No');
+                        showFlashError(context, 'Invalid Trailer ID');
+                      },
+                      child: const Text("No"),
+                    ),
+                  ],
+                ));
       } else {
+        List<WorkOrders> workOrders =
+            await DatabaseHandler.FindTrailerOrders(trailerId);
 
-        List<WorkOrders> workOrders = await DatabaseHandler.FindTrailerOrders(trailerId);
-
-        Navigator.push(context, MaterialPageRoute(builder: (context) => WorkOrderList(workOrders: workOrders, trailer: trailer, employeeCode: employeeCode),));
-      
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => WorkOrderList(
+                  workOrders: workOrders,
+                  trailer: trailer,
+                  employeeCode: employeeCode),
+            ));
       }
-
     }
-
   }
-
 }
