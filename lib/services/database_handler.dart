@@ -103,14 +103,13 @@ class DatabaseHandler {
   static Future<Employee> validUser(String email, String password) async {
     final users = await FirebaseFirestore.instance
         .collection("users")
-        .where('email', isEqualTo: email)
+        .where('email', isEqualTo: email).where('password', isEqualTo: password)
         .get(); // Query users by email
 
     if (users.docs.isNotEmpty) {
       // Check if a user with the provided email exists
       DocumentSnapshot documentSnapshot =
           users.docs.first; // Assuming only one user with the email exists
-      print('Enter ');
       return Employee.fromFirestore(documentSnapshot);
     } else {
       return Employee(
