@@ -8,14 +8,25 @@ import 'package:frontend/models/work_order_model.dart';
 class DatabaseHandler {
   static Future<bool> createUser({required Employee employee}) async {
 
-    final employeesDoc = await FirebaseFirestore.instance
+      final employeesDoc = await FirebaseFirestore.instance
       .collection("users")
       .where("employeeCode", isEqualTo: employee.employeeCode)
       .get();
 
-    DocumentSnapshot documentSnapshot = employeesDoc.docs.first;
+      bool valid = false;
 
-    if (documentSnapshot.exists) {
+      try{
+
+        DocumentSnapshot documentSnapshot = employeesDoc.docs.first;
+      
+
+      }catch (e) {
+
+        valid = true;
+
+      }
+
+    if (valid) {
 
       final docUser = FirebaseFirestore.instance.collection("users").doc();
 
@@ -32,7 +43,7 @@ class DatabaseHandler {
 
     }else{
 
-      return false;
+       return false;
 
     }
   }

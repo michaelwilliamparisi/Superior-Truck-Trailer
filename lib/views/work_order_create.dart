@@ -113,8 +113,6 @@ class _MyOrderState extends State<CreateWorkOrder> {
 
                 DatabaseHandler.AddWorkOrder(trailer, workOrder);
 
-                workOrders.add(workOrder);
-
                 Navigator.push(context, MaterialPageRoute(builder: (context) => WorkOrderList(workOrders: workOrders, trailer: trailer, employeeCode: employeeCode,),));
                 
               },

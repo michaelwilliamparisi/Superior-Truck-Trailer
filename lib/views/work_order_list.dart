@@ -8,6 +8,7 @@ import 'package:frontend/models/trailer_model.dart';
 import 'package:frontend/models/work_order_model.dart';
 import 'package:frontend/services/database_handler.dart';
 import 'package:frontend/views/work_order_create.dart';
+import 'package:frontend/views/work_order_search.dart';
 import 'work_order_edit.dart';
 
 class WorkOrderList extends StatefulWidget {
@@ -126,9 +127,9 @@ class _MyWorkOrderState extends State<WorkOrderList> {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => CreateWorkOrder(trailer: trailer, workOrders: workOrders, employeeCode: employeeCode,),));    
                 }
               );
-            }
-          }          
-          ),
+            }     
+          }  
+        ),
     );
   }
 }
