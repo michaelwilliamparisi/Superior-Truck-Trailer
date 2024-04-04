@@ -46,14 +46,33 @@ class _MyWorkOrderState extends State<WorkOrderList> {
               return ListTile(
                   title: Text("Order ID: ${workOrders[index].workOrderNum}"),
                   subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Status: ${workOrders[index].status}"),
-                    Text("Job Codes: ${workOrders[index].jobCodes}"),
-                    Text("Employee Code: ${workOrders[index].empNum}"),
-                  ],
-                ),
-                  trailing: ElevatedButton(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Status: ${workOrders[index].status}"),
+                      Text("Job Codes: ${workOrders[index].jobCodes}"),
+                      Text("Employee Code: ${workOrders[index].empNum}"),
+                    ],
+                  ),
+                  trailing: Row( 
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                        ), 
+                      backgroundColor: const Color.fromARGB(255, 136, 186, 226),),
+                      child: Image.asset('asset/images/completed.png', width: 30, height: 30,),
+                      onPressed: () {
+                      
+                        DatabaseHandler.WorkOrderStatus(trailer.trailerId, workOrders[index].workOrderNum, 'C');
+                        workOrders.removeAt(index);
+                        setState(() {_MyWorkOrderState(workOrders, trailer, employeeCode);});
+
+                      }
+                    ),
+
+                    ElevatedButton(
                       style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
@@ -70,9 +89,10 @@ class _MyWorkOrderState extends State<WorkOrderList> {
                             content: const Text("Are you sure you want to delete this Work Order?"),
                             actions: <Widget>[
                               TextButton(onPressed: () {
-                                  DatabaseHandler.deleteWorkOrder(trailer.trailerId, workOrders[index].workOrderNum);
+                                  DatabaseHandler.WorkOrderStatus(trailer.trailerId, workOrders[index].workOrderNum, 'D');
                                   workOrders.removeAt(index);
                                   setState(() {_MyWorkOrderState(workOrders, trailer, employeeCode);});
+                                  Navigator.pop(context, 'No');
                                 }, 
                                 child: const Text("Yes"),
                               ),
@@ -84,15 +104,16 @@ class _MyWorkOrderState extends State<WorkOrderList> {
                                 child: const Text("No"),
                               ),
                             ],
-                          )
+                          ),
                         );
-                      },
+                      }  
                     ),
-                  shape: const Border(top: BorderSide()),
-                  onTap: () {
+                  ], 
+                ),
+              shape: const Border(top: BorderSide()),
+              onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => EditWorkOrder(trailer: trailer, workOrders: workOrders, index: index, employeeCode: employeeCode),));
                   }
-                  
               );
           
             }else {

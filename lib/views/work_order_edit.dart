@@ -141,11 +141,6 @@ class _MyOrderState extends State<EditWorkOrder> {
                         // Show error message
                         showFlashError(context, 'Please fill in all fields.');
 
-                        // Clear the text fields
-                        _jobCodesTEC.clear();
-                        _partsTEC.clear();
-                        _labourTEC.clear();
-
                         return; // Exit the function
                       }
 
@@ -157,7 +152,6 @@ class _MyOrderState extends State<EditWorkOrder> {
                           trailer, workOrders[index]);
 
                       if (updated) {
-                        print("Work Order Updated");
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -170,7 +164,7 @@ class _MyOrderState extends State<EditWorkOrder> {
                         );
                       } else {
                         //Error Handling
-                        print("Couldn't find Work Order");
+                        showFlashError(context, 'Invalid Data, Work Order not updated');
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -178,6 +172,24 @@ class _MyOrderState extends State<EditWorkOrder> {
                     ),
                     child: const Text("Update Work Order"),
                   ),
+                  ElevatedButton(
+                    onPressed: () {
+
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WorkOrderList(
+                              workOrders: workOrders,
+                              trailer: trailer,
+                              employeeCode: employeeCode,
+                            ),
+                          ),
+                        );
+
+                    },
+                    child: const Text("Exit Work Order"),
+                  ),
+
                 ],
               ),
             ),

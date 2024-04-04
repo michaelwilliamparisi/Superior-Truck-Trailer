@@ -6,17 +6,35 @@ import 'package:frontend/models/work_order_model.dart';
 
 //main function
 class DatabaseHandler {
-  static Future createUser({required Employee employee}) async {
-    final docUser = FirebaseFirestore.instance.collection("users").doc();
+  static Future<bool> createUser({required Employee employee}) async {
 
-    final json = {
-      'email': employee.email,
-      'password': employee.password,
-      'employeeCode': employee.employeeCode,
-      'employeeStatus': employee.employeeStatus
-    };
+    final employeesDoc = await FirebaseFirestore.instance
+      .collection("users")
+      .where("employeeCode", isEqualTo: employee.employeeCode)
+      .get();
 
-    await docUser.set(json);
+    DocumentSnapshot documentSnapshot = employeesDoc.docs.first;
+
+    if (documentSnapshot.exists) {
+
+      final docUser = FirebaseFirestore.instance.collection("users").doc();
+
+      final json = {
+        'email': employee.email,
+        'password': employee.password,
+        'employeeCode': employee.employeeCode,
+        'employeeStatus': employee.employeeStatus
+      };
+
+      await docUser.set(json);
+
+      return true;
+
+    }else{
+
+      return false;
+
+    }
   }
 
   static Future<bool> AddWorkOrder(
@@ -128,24 +146,31 @@ class DatabaseHandler {
         .collection('trailers')
         .doc(trailerId)
         .collection('WorkOrders')
-        .where('status', isNotEqualTo: 'A')
+        .where('status', isEqualTo: 'A')
         .get();
     return snapshot.docs.map((doc) => WorkOrders.fromFirestore(doc)).toList();
   }
 
-  static Future<void> deleteWorkOrder(
-    String trailerId,
-    String workOrderId,
-  ) async {
-    DocumentReference documentReference = FirebaseFirestore.instance
-        .collection('trailers')
-        .doc(trailerId)
-        .collection('WorkOrders')
-        .doc(workOrderId);
+static Future<void> WorkOrderStatus(String trailerId, String workOrderId, String status) async {
 
-    documentReference.update({
-      'status': 'D',
-    });
+
+      DocumentReference documentReference = FirebaseFirestore.instance.collection('trailers').doc(trailerId).collection('WorkOrders').doc(workOrderId);
+
+      documentReference.update({
+        'status': status,
+      });
+
+  }
+
+  static Future<void> deleteWorkOrder(String trailerId, String workOrderId,) async {
+
+
+      DocumentReference documentReference = FirebaseFirestore.instance.collection('trailers').doc(trailerId).collection('WorkOrders').doc(workOrderId);
+
+      documentReference.update({
+        'status': 'D',
+      });
+
   }
 
   static Future<int> TotalWorkOrders(String trailerId) async {

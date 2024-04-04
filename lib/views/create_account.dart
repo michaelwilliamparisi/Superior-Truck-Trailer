@@ -138,22 +138,29 @@ class CreateView extends StatelessWidget {
                     );
 
                     // Insert user into the database
-                    DatabaseHandler.createUser(employee: employee);
+                    bool userCreated = await DatabaseHandler.createUser(employee: employee);
 
-                    Navigator.pop(
+                    if (userCreated) {
+
+                      Navigator.pop(
                       context,
                       MaterialPageRoute(
                           builder: (context) => const LoginView()),
                     );
 
-                    print('User added to the database');
+                    } else {
+
+                      showFlashError(context,
+                        "Invalid Employee Code");
+                      employeeCodeController.text = "";
+
+                    }
+
                   } else {
                     confirmPassword == "";
                     password == "";
-                    print('Passwords do not match');
                   }
 
-                  print("Create Account pressed");
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
