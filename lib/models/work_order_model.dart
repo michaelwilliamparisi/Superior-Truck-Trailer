@@ -9,6 +9,8 @@ class WorkOrders {
   String _jobCodes;
   String _parts;
   double _labour;
+  String _beforePhotoPath;
+  String _afterPhotoPath;
 
   WorkOrders({
     required String workOrderNum,
@@ -19,14 +21,18 @@ class WorkOrders {
     required String jobCodes,
     required String parts,
     required double labour,
-  }) :  _workOrderNum = workOrderNum,
+    required String beforePhotoPath,
+    required String afterPhotoPath,
+  })  : _workOrderNum = workOrderNum,
         _empNum = empNum,
         _trailerNum = trailerNum,
         _companyName = companyName,
         _status = status,
         _jobCodes = jobCodes,
         _parts = parts,
-        _labour = labour;
+        _labour = labour,
+        _beforePhotoPath = beforePhotoPath,
+        _afterPhotoPath = afterPhotoPath;
 
   String get workOrderNum => _workOrderNum;
   String get empNum => _empNum;
@@ -36,6 +42,8 @@ class WorkOrders {
   String get jobCodes => _jobCodes;
   String get parts => _parts;
   double get labour => _labour;
+  String get beforePhotoPath => _beforePhotoPath;
+  String get afterPhotoPath => _afterPhotoPath;
 
   set workOrderNum(String value) {
     _workOrderNum = value;
@@ -69,6 +77,13 @@ class WorkOrders {
     _labour = value;
   }
 
+  set beforePhotoPath(String value) {
+    _beforePhotoPath = value;
+  }
+
+  set afterPhotoPath(String value) {
+    _afterPhotoPath = value;
+  }
 
   Map<String, dynamic> mapUser() {
     return {
@@ -76,10 +91,12 @@ class WorkOrders {
       'empNum': _empNum,
       'trailerNum': _trailerNum,
       'companyName': _companyName,
-      'status' : _status,
+      'status': _status,
       'jobCodes': _jobCodes,
       'parts': _parts,
       'labour': _labour,
+      'beforePhotoPath': _beforePhotoPath,
+      'afterPhotoPath': _afterPhotoPath,
     };
   }
 
@@ -94,8 +111,8 @@ class WorkOrders {
       jobCodes: data['jobCodes'] ?? '',
       parts: data['parts'] ?? '',
       labour: data['labour'] ?? 0,
-      // Parse other properties similarly
+      beforePhotoPath: data['beforePhotoPath'] ?? '',
+      afterPhotoPath: data['afterPhotoPath'] ?? '',
     );
   }
-
 }

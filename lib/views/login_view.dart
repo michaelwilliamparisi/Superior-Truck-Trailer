@@ -84,7 +84,7 @@ class LoginViewState extends State<LoginView> {
             ),
             ElevatedButton(
               onPressed: () async {
-                final String email = _emailTEC.text;
+                final String email = _emailTEC.text.trim();
                 final String password = _passwordTEC.text;
 
                 // checking if text fields are empty
@@ -93,14 +93,18 @@ class LoginViewState extends State<LoginView> {
                   return;
                 }
 
-                final Employee loginEmployee = await DatabaseHandler.validUser(email, password);
+                final Employee loginEmployee =
+                    await DatabaseHandler.validUser(email, password);
 
                 if (loginEmployee.employeeCode != '-1') {
                   _emailTEC.text = "";
                   _passwordTEC.text = "";
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => WorkOrderSearch(employeeCode: loginEmployee.employeeCode,)),
+                    MaterialPageRoute(
+                        builder: (context) => WorkOrderSearch(
+                              employeeCode: loginEmployee.employeeCode,
+                            )),
                   );
                 } else {
                   showFlashError(context, 'Invalid Email or Password.');

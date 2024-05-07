@@ -7,27 +7,20 @@ import 'package:frontend/models/work_order_model.dart';
 //main function
 class DatabaseHandler {
   static Future<bool> createUser({required Employee employee}) async {
+    final employeesDoc = await FirebaseFirestore.instance
+        .collection("users")
+        .where("employeeCode", isEqualTo: employee.employeeCode)
+        .get();
 
-      final employeesDoc = await FirebaseFirestore.instance
-      .collection("users")
-      .where("employeeCode", isEqualTo: employee.employeeCode)
-      .get();
+    bool valid = false;
 
-      bool valid = false;
-
-      try{
-
-        DocumentSnapshot documentSnapshot = employeesDoc.docs.first;
-      
-
-      }catch (e) {
-
-        valid = true;
-
-      }
+    try {
+      DocumentSnapshot documentSnapshot = employeesDoc.docs.first;
+    } catch (e) {
+      valid = true;
+    }
 
     if (valid) {
-
       final docUser = FirebaseFirestore.instance.collection("users").doc();
 
       final json = {
@@ -40,11 +33,8 @@ class DatabaseHandler {
       await docUser.set(json);
 
       return true;
-
-    }else{
-
-       return false;
-
+    } else {
+      return false;
     }
   }
 
@@ -65,6 +55,8 @@ class DatabaseHandler {
       'jobCodes': workOrders.jobCodes,
       'parts': workOrders.parts,
       'labour': workOrders.labour,
+      'beforePhotoPath': workOrders.beforePhotoPath,
+      'afterPhotoPath': workOrders.afterPhotoPath,
     };
 
     await docWorkOrder.set(json);
@@ -80,10 +72,8 @@ class DatabaseHandler {
     final json = {
       'trailerId': trailer.trailerId,
       'companyName': trailer.companyName,
-      'length': trailer.length,
-      'width': trailer.width,
-      'height': trailer.height,
-      'weight': trailer.weight,
+      'milage': trailer.milage,
+      'licensePlate': trailer.licensePlate,
     };
 
     await docWorkOrder.set(json);
@@ -114,7 +104,8 @@ class DatabaseHandler {
   static Future<Employee> validUser(String email, String password) async {
     final users = await FirebaseFirestore.instance
         .collection("users")
-        .where('email', isEqualTo: email).where('password', isEqualTo: password)
+        .where('email', isEqualTo: email)
+        .where('password', isEqualTo: password)
         .get(); // Query users by email
 
     if (users.docs.isNotEmpty) {
@@ -142,12 +133,7 @@ class DatabaseHandler {
       return Trailer.fromFirestore(documentSnapshot);
     } catch (e) {
       return Trailer(
-          trailerId: '-1',
-          companyName: '',
-          length: 0.0,
-          width: 0.0,
-          height: 0.0,
-          weight: 0.0);
+          trailerId: '', companyName: '', milage: 0, licensePlate: '');
     }
   }
 
@@ -161,26 +147,32 @@ class DatabaseHandler {
     return snapshot.docs.map((doc) => WorkOrders.fromFirestore(doc)).toList();
   }
 
-static Future<void> WorkOrderStatus(String trailerId, String workOrderId, String status) async {
+  static Future<void> WorkOrderStatus(
+      String trailerId, String workOrderId, String status) async {
+    DocumentReference documentReference = FirebaseFirestore.instance
+        .collection('trailers')
+        .doc(trailerId)
+        .collection('WorkOrders')
+        .doc(workOrderId);
 
-
-      DocumentReference documentReference = FirebaseFirestore.instance.collection('trailers').doc(trailerId).collection('WorkOrders').doc(workOrderId);
-
-      documentReference.update({
-        'status': status,
-      });
-
+    documentReference.update({
+      'status': status,
+    });
   }
 
-  static Future<void> deleteWorkOrder(String trailerId, String workOrderId,) async {
+  static Future<void> deleteWorkOrder(
+    String trailerId,
+    String workOrderId,
+  ) async {
+    DocumentReference documentReference = FirebaseFirestore.instance
+        .collection('trailers')
+        .doc(trailerId)
+        .collection('WorkOrders')
+        .doc(workOrderId);
 
-
-      DocumentReference documentReference = FirebaseFirestore.instance.collection('trailers').doc(trailerId).collection('WorkOrders').doc(workOrderId);
-
-      documentReference.update({
-        'status': 'D',
-      });
-
+    documentReference.update({
+      'status': 'D',
+    });
   }
 
   static Future<int> TotalWorkOrders(String trailerId) async {

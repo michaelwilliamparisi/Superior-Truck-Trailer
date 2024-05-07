@@ -150,13 +150,14 @@ class _WorkOrderViewState extends State<WorkOrderSearch> {
             await DatabaseHandler.FindTrailerOrders(trailerId);
 
         Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => WorkOrderList(
-                  workOrders: workOrders,
-                  trailer: trailer,
-                  employeeCode: employeeCode),
-            ));
+          context,
+          MaterialPageRoute(
+            builder: (context) => WorkOrderList(
+                workOrders: workOrders,
+                trailer: trailer,
+                employeeCode: employeeCode),
+          ),
+        );
       }
     }
   }

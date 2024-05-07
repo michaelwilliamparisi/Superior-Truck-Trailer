@@ -25,10 +25,12 @@ class _MyOrderState extends State<CreateTrailer> {
   final String trailerId;
   final String employeeCode;
   final TextEditingController _companyNameTEC = TextEditingController();
-  final TextEditingController _lengthTEC = TextEditingController();
-  final TextEditingController _widthTEC = TextEditingController();
-  final TextEditingController _heightTEC = TextEditingController();
-  final TextEditingController _weightTEC = TextEditingController();
+  final TextEditingController _milageTEC = TextEditingController();
+  final TextEditingController _licensePlateTEC = TextEditingController();
+  // final TextEditingController _lengthTEC = TextEditingController();
+  // final TextEditingController _widthTEC = TextEditingController();
+  // final TextEditingController _heightTEC = TextEditingController();
+  // final TextEditingController _weightTEC = TextEditingController();
 
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   //late QRViewController controller;
@@ -74,69 +76,73 @@ class _MyOrderState extends State<CreateTrailer> {
             Padding(
               padding: const EdgeInsets.all(10),
               child: TextField(
-                controller: _lengthTEC,
+                controller: _milageTEC,
                 obscureText: false,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Length - Enter in meters without symbol',
-                  hintText: 'Example: 6.8',
+                  labelText: 'Enter milage',
+                  hintText: 'Example: 1000000',
                 ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(10),
               child: TextField(
-                controller: _widthTEC,
+                controller: _licensePlateTEC,
                 obscureText: false,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: 'Width - Enter in meters without symbol',
-                  hintText: "Example: 2.4",
+                  labelText: 'Enter Plate number',
+                  hintText: "Example: CPWE231",
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: _heightTEC,
-                obscureText: false,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Height - Enter in meters without symbol',
-                  hintText: "Example: 3.6",
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: TextField(
-                controller: _weightTEC,
-                obscureText: false,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Weight - Enter in pounds without symbol',
-                  hintText: 'Example: 150.2',
-                ),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(10),
+            //   child: TextField(
+            //     controller: _heightTEC,
+            //     obscureText: false,
+            //     decoration: const InputDecoration(
+            //       border: OutlineInputBorder(),
+            //       labelText: 'Height - Enter in meters without symbol',
+            //       hintText: "Example: 3.6",
+            //     ),
+            //   ),
+            // ),
+            // Padding(
+            //   padding: const EdgeInsets.all(10),
+            //   child: TextField(
+            //     controller: _weightTEC,
+            //     obscureText: false,
+            //     decoration: const InputDecoration(
+            //       border: OutlineInputBorder(),
+            //       labelText: 'Weight - Enter in pounds without symbol',
+            //       hintText: 'Example: 150.2',
+            //     ),
+            //   ),
+            // ),
             ElevatedButton(
               onPressed: () async {
                 final String companyName = _companyNameTEC.text;
 
                 try {
-                  final double length = double.parse(_lengthTEC.text);
-                  final double width = double.parse(_widthTEC.text);
-                  final double height = double.parse(_heightTEC.text);
-                  final double weight = double.parse(_weightTEC.text);
+                  final int milage = int.parse(_milageTEC.text);
+                  final String licensePlate = _licensePlateTEC.text;
+                  // final double length = double.parse(_lengthTEC.text);
+                  // final double width = double.parse(_widthTEC.text);
+                  // final double height = double.parse(_heightTEC.text);
+                  // final double weight = double.parse(_weightTEC.text);
 
                   Trailer trailer = Trailer(
-                      trailerId: trailerId,
-                      companyName: companyName,
-                      length: length,
-                      width: width,
-                      height: height,
-                      weight: weight);
-
+                    trailerId: trailerId,
+                    companyName: companyName,
+                    milage: milage,
+                    licensePlate: licensePlate,
+                    // length: length,
+                    // width: width,
+                    // height: height,
+                    // weight: weight);
+                  );
                   DatabaseHandler.AddTrailer(trailer);
 
                   Navigator.push(
