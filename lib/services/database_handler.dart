@@ -55,8 +55,7 @@ class DatabaseHandler {
       'jobCodes': workOrders.jobCodes,
       'parts': workOrders.parts,
       'labour': workOrders.labour,
-      'beforePhotoPath': workOrders.beforePhotoPath,
-      'afterPhotoPath': workOrders.afterPhotoPath,
+      'imagePath': workOrders.imagePath,
     };
 
     await docWorkOrder.set(json);
@@ -133,7 +132,7 @@ class DatabaseHandler {
       return Trailer.fromFirestore(documentSnapshot);
     } catch (e) {
       return Trailer(
-          trailerId: '', companyName: '', milage: 0, licensePlate: '');
+          trailerId: '-1', companyName: '', milage: 0, licensePlate: '');
     }
   }
 

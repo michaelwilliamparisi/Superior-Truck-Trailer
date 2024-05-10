@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/services/storage_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:frontend/models/trailer_model.dart';
 import 'package:frontend/models/work_order_model.dart';
@@ -34,10 +35,7 @@ class _MyOrderState extends State<CreateWorkOrder> {
   final TextEditingController _jobCodesTEC = TextEditingController();
   final TextEditingController _partsTEC = TextEditingController();
   final TextEditingController _labourTEC = TextEditingController();
-
-  // holds the photos
-  String? beforePhotoPath;
-  String? afterPhotoPath;
+  String? imagePath;
 
   //Company Name (Read Only)
   final String companyName = "";
@@ -114,100 +112,54 @@ class _MyOrderState extends State<CreateWorkOrder> {
             ),
             ElevatedButton(
               onPressed: () async {
-                try {
-                  final String jobCodes = _jobCodesTEC.text;
-                  final String parts = _partsTEC.text;
-                  final String labour = _labourTEC.text;
+                final imagePicker = ImagePicker();
+                final pickedFile = await imagePicker.pickImage(
+                  source: ImageSource.camera,
+                );
+                if (pickedFile != null) {
+                  try {
+                    // Upload the picked image to Firebase Storage
+                    String? imageURL =
+                        await uploadImageToStorage(File(pickedFile.path));
 
-                  int workOrderLength =
-                      await DatabaseHandler.TotalWorkOrders(trailer.trailerId);
-
-                  // placeholder values
-                  String beforePhotoPath = "path/to/before/photo.jpg";
-                  String afterPhotoPath = "path/to/before/photo.jpg";
-
-                  WorkOrders workOrder = WorkOrders(
-                    workOrderNum:
-                        '${trailer.trailerId}WO${workOrderLength.toString()}',
-                    empNum: employeeCode,
-                    trailerNum: trailer.trailerId,
-                    companyName: trailer.companyName,
-                    status: status,
-                    jobCodes: jobCodes,
-                    parts: parts,
-                    labour: double.parse(labour),
-                    beforePhotoPath: beforePhotoPath, // this will change
-                    afterPhotoPath: afterPhotoPath, // this will change
-                  );
-
-                  await DatabaseHandler.AddWorkOrder(trailer, workOrder);
-
-                  workOrders.add(workOrder);
-
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => WorkOrderList(
-                          workOrders: workOrders,
-                          trailer: trailer,
-                          employeeCode: employeeCode,
+                    // Check if imageURL is not null before proceeding
+                    if (imageURL != null) {
+                      setState(() {
+                        imagePath =
+                            imageURL; // Update the imagePath with the URL from Firebase Storage
+                      });
+                    } else {
+                      // Handle the case where imageURL is null (upload failed)
+                      // Show an error message to the user
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              "Failed to upload image to Firebase Storage"),
                         ),
-                      ));
-                } catch (e) {
-                  // Handle the error here
-                  print("Error creating work order: $e");
-                  // Show a snackbar or dialog to inform the user about the error
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Error creating work order: $e"),
-                    ),
-                  );
+                      );
+                    }
+                  } catch (e) {
+                    // Handle any errors that occur during image upload
+                    print("Error uploading image to Firebase Storage: $e");
+                    // Show an error message to the user
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content:
+                            Text("Error uploading image to Firebase Storage"),
+                      ),
+                    );
+                  }
                 }
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-              ),
-              child: const Text("Create Work Order"),
+              child: const Text("Take Photo"),
             ),
-            // Button to take the BEFORE photo
-            ElevatedButton(
-              onPressed: () async {
-                final imagePicker = ImagePicker();
-                final pickedFile =
-                    await imagePicker.pickImage(source: ImageSource.camera);
-                setState(() {
-                  beforePhotoPath = pickedFile?.path;
-                });
-              },
-              child: const Text("Capture Before Photo"),
-            ),
-            // Display before photo if available
-            if (beforePhotoPath != null)
+
+            // Display the photo if available
+            if (imagePath != null)
               Container(
-                height: 200,
+                height: MediaQuery.of(context).size.height * 0.3,
                 child: Image.file(
-                  File(beforePhotoPath!),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            // Button to take the AFTER photo
-            ElevatedButton(
-              onPressed: () async {
-                final imagePicker = ImagePicker();
-                final pickedFile =
-                    await imagePicker.pickImage(source: ImageSource.camera);
-                setState(() {
-                  afterPhotoPath = pickedFile?.path;
-                });
-              },
-              child: const Text("Capture After Photo"),
-            ),
-            // Display after photo if available
-            if (afterPhotoPath != null)
-              Container(
-                height: 200,
-                child: Image.file(
-                  File(afterPhotoPath!),
+                  File(imagePath!),
                   fit: BoxFit.cover,
                 ),
               ),

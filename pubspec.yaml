@@ -18,6 +18,8 @@ dependencies:
   cloud_firestore: ^4.15.10
   flutter_barcode_scanner: ^2.0.0
   image_picker: ^0.8.4+2
+  file_picker: ^8.0.3
+  firebase_storage: ^11.7.5
     
 
 dev_dependencies:
