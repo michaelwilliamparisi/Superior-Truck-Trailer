@@ -1,30 +1,20 @@
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-Future<String?> uploadImageToStorage(File imageFile) async {
+Future<String?> uploadImageToStorage(
+    File imageFile, String trailerId, String workOrderId) async {
   try {
-    // Get a reference to the storage service, which is used to create references in your Firebase Storage bucket
     final FirebaseStorage storage = FirebaseStorage.instance;
+    final Reference storageRef = storage.ref().child('images/$workOrderId.jpg');
 
-    // Create a reference to the location you want to upload to in Firebase Storage
-    final Reference storageRef = storage
-        .ref()
-        .child('images/${DateTime.now().millisecondsSinceEpoch}.jpg');
-
-    // Upload the file to Firebase Storage
     final UploadTask uploadTask = storageRef.putFile(imageFile);
-
-    // Await the completion of the upload task
     await uploadTask;
 
-    // Get the download URL of the uploaded file
-    final String downloadURL = await storageRef.getDownloadURL();
-
-    // Return the download URL
-    return downloadURL;
+    // Return the reference to the uploaded image
+    return storageRef.fullPath;
   } catch (e) {
-    // Handle any errors that occur during the upload process
     print('Error uploading image to Firebase Storage: $e');
     return null;
   }

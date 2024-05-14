@@ -42,7 +42,7 @@ class _MyOrderState extends State<CreateWorkOrder> {
   //Work Order ID (Read Only)
   final String workOrderID = "";
   //Status
-  final String status = "P";
+  final String status = "A";
   //job code(s)
   final String jobCodes = "";
   //Parts required
@@ -118,39 +118,60 @@ class _MyOrderState extends State<CreateWorkOrder> {
                 );
                 if (pickedFile != null) {
                   try {
-                    // Upload the picked image to Firebase Storage
-                    String? imageURL =
-                        await uploadImageToStorage(File(pickedFile.path));
+                    int workOrderLength = await DatabaseHandler.TotalWorkOrders(
+                        trailer.trailerId);
+                    String workOrderId =
+                        '${trailer.trailerId}WO${workOrderLength.toString()}';
 
-                    // Check if imageURL is not null before proceeding
-                    if (imageURL != null) {
-                      setState(() {
-                        imagePath =
-                            imageURL; // Update the imagePath with the URL from Firebase Storage
-                      });
-                    } else {
-                      // Handle the case where imageURL is null (upload failed)
-                      // Show an error message to the user
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              "Failed to upload image to Firebase Storage"),
+                    // Upload the image and get the reference
+                    String? imagePathReference = await uploadImageToStorage(
+                        File(pickedFile.path), trailer.trailerId, workOrderId);
+
+                    if (imagePathReference != null) {
+                      WorkOrders workOrder = WorkOrders(
+                        workOrderNum: workOrderId,
+                        empNum: employeeCode,
+                        trailerNum: trailer.trailerId,
+                        companyName: trailer.companyName,
+                        status: status,
+                        jobCodes: _jobCodesTEC.text,
+                        parts: _partsTEC.text,
+                        labour: double.parse(_labourTEC.text),
+                        // Update the imagePath with the reference to the uploaded image
+                        imagePath: imagePathReference,
+                      );
+
+                      // Add the work order to Firestore
+                      await DatabaseHandler.AddWorkOrder(trailer, workOrder);
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WorkOrderList(
+                            workOrders: workOrders,
+                            trailer: trailer,
+                            employeeCode: employeeCode,
+                          ),
                         ),
                       );
+                      return;
                     }
                   } catch (e) {
-                    // Handle any errors that occur during image upload
                     print("Error uploading image to Firebase Storage: $e");
-                    // Show an error message to the user
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content:
-                            Text("Error uploading image to Firebase Storage"),
-                      ),
-                    );
                   }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content:
+                          Text("Failed to upload image to Firebase Storage"),
+                    ),
+                  );
                 }
               },
+              child: const Text("Create Work Order"),
+            ),
+
+            ElevatedButton(
+              onPressed: () async {},
               child: const Text("Take Photo"),
             ),
 
