@@ -144,8 +144,7 @@ class _MyWorkOrderState extends State<WorkOrderList> {
               return ListTile(
                   title: const Center(child: Text("Create a New Work Order")),
                   subtitle: const Center(
-                      child:
-                          Text("Add new jobs and work orders to this trailer")),
+                      child: Text("Add new work orders to this trailer")),
                   shape: const Border(top: BorderSide(), bottom: BorderSide()),
                   onTap: () {
                     Navigator.push(

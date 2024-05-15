@@ -2,13 +2,15 @@
 
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/models/trailer_model.dart';
 import 'package:frontend/models/work_order_model.dart';
 import 'package:frontend/services/database_handler.dart';
+import 'package:frontend/services/storage_service.dart';
 import 'package:frontend/views/work_order_list.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:file_picker/file_picker.dart';
+
+import 'dart:typed_data';
 
 class EditWorkOrder extends StatefulWidget {
   const EditWorkOrder(
@@ -39,13 +41,11 @@ class _MyOrderState extends State<EditWorkOrder> {
   TextEditingController _jobCodesTEC = TextEditingController();
   TextEditingController _partsTEC = TextEditingController();
   TextEditingController _labourTEC = TextEditingController();
-  String? imagePath; // path of the selected image
+  Uint8List? imageData;
 
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   //late QRViewController controller;
-  String _scanBarcodeResult = 'Scan a QR Code';
-
-  String? afterPhotoPath;
+  // String _scanBarcodeResult = 'Scan a QR Code';
 
   @override
   void initState() {
@@ -53,13 +53,25 @@ class _MyOrderState extends State<EditWorkOrder> {
     getUser();
   }
 
-  getUser() {
+  Future<void> getUser() async {
     setState(() {
       isLoading = true;
     });
+    final workOrder = workOrders[widget.index];
     _jobCodesTEC.text = workOrders[index].jobCodes;
     _partsTEC.text = workOrders[index].parts;
     _labourTEC.text = workOrders[index].labour.toString();
+
+    // Retrieve the image storage reference from Firestore
+    final imagePath = workOrder.imagePath;
+    if (imagePath != null) {
+      // Update the state with the image storage reference
+      final photoData = await retrievePhoto(imagePath);
+      setState(() {
+        imageData = photoData;
+      });
+    }
+
     setState(() {
       isLoading = false;
     });
@@ -71,21 +83,6 @@ class _MyOrderState extends State<EditWorkOrder> {
         content: Text(message),
       ),
     );
-  }
-
-  Future<void> _pickImage() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-      allowMultiple: false,
-    );
-
-    if (result != null) {
-      setState(
-        () {
-          imagePath = result.files.single.path;
-        },
-      );
-    }
   }
 
   @override
@@ -152,20 +149,9 @@ class _MyOrderState extends State<EditWorkOrder> {
                       ),
                     ),
                   ),
-                  ElevatedButton(
-                    //Button to upload image
-                    onPressed: _pickImage,
-                    child: const Text("Select Image"),
-                  ),
-                  // Display selected image if available
-                  if (imagePath != null)
-                    Container(
-                      height: 200,
-                      child: Image.file(
-                        File(imagePath!),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+
+                  // Display photo here
+
                   ElevatedButton(
                     onPressed: () async {
                       final String jobCodes = _jobCodesTEC.text;
@@ -180,12 +166,16 @@ class _MyOrderState extends State<EditWorkOrder> {
                         return; // Exit the function
                       }
                       // Upload image to storage and get image URL
-                      final imageUrl = await uploadImageToStorage();
+                      // final imageUrl = await uploadImageToStorage(
+                      //     File(imageData! as String),
+                      //     trailer.trailerId,
+                      //     workOrders[index].workOrderNum);
 
+                      // Update work order details
                       workOrders[index].jobCodes = jobCodes;
                       workOrders[index].parts = parts;
                       workOrders[index].labour = double.parse(labour);
-                      workOrders[index].imagePath = imageUrl!;
+                      // workOrders[index].imagePath = imageUrl!;
 
                       bool updated = DatabaseHandler.UpdateWorkOrder(
                           trailer, workOrders[index]);
@@ -212,27 +202,14 @@ class _MyOrderState extends State<EditWorkOrder> {
                     ),
                     child: const Text("Update Work Order"),
                   ),
-                  // Button to take the AFTER photo
-                  ElevatedButton(
-                    onPressed: () async {
-                      final imagePicker = ImagePicker();
-                      final pickedFile = await imagePicker.pickImage(
-                          source: ImageSource.camera);
-                      setState(() {
-                        afterPhotoPath = pickedFile?.path;
-                      });
-                    },
-                    child: const Text("Capture After Photo"),
+                  // View the image from storage
+                  Container(
+                    height: 200,
+                    child: imageData != null
+                        ? Image.memory(imageData!)
+                        : Text('No image available'),
                   ),
-                  // Display after photo if available
-                  if (afterPhotoPath != null)
-                    Container(
-                      height: 200,
-                      child: Image.file(
-                        File(afterPhotoPath!),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+
                   ElevatedButton(
                     onPressed: () {
                       Navigator.push(
@@ -252,13 +229,5 @@ class _MyOrderState extends State<EditWorkOrder> {
               ),
             ),
     );
-  }
-
-  Future<String?> uploadImageToStorage() async {
-    // Upload image to your storage (e.g., Firebase Storage) and get the download URL
-    // This is just a placeholder function, you need to implement the actual upload logic
-    // For example, if you're using Firebase Storage, you can use Firebase Storage SDK for Flutter
-    // Return the download URL of the uploaded image
-    return 'https://example.com/image.jpg'; // Placeholder URL
   }
 }
