@@ -1,16 +1,16 @@
 // Work Order view
 
-import 'dart:io';
-
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/services.dart';
+import 'package:frontend/services/pdf.dart';
+import 'package:pdf/pdf.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/models/trailer_model.dart';
 import 'package:frontend/models/work_order_model.dart';
 import 'package:frontend/services/database_handler.dart';
 import 'package:frontend/services/storage_service.dart';
 import 'package:frontend/views/work_order_list.dart';
-
 import 'dart:typed_data';
+import 'package:printing/printing.dart';
 
 class EditWorkOrder extends StatefulWidget {
   const EditWorkOrder(
@@ -75,6 +75,12 @@ class _MyOrderState extends State<EditWorkOrder> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  Future<Uint8List> loadLogoBytes() async {
+    final ByteData data =
+        await rootBundle.load('assets/images/logo.JPG'); // Load from assets
+    return data.buffer.asUint8List();
   }
 
   void showFlashError(BuildContext context, String message) {
@@ -165,17 +171,11 @@ class _MyOrderState extends State<EditWorkOrder> {
 
                         return; // Exit the function
                       }
-                      // Upload image to storage and get image URL
-                      // final imageUrl = await uploadImageToStorage(
-                      //     File(imageData! as String),
-                      //     trailer.trailerId,
-                      //     workOrders[index].workOrderNum);
 
                       // Update work order details
                       workOrders[index].jobCodes = jobCodes;
                       workOrders[index].parts = parts;
                       workOrders[index].labour = double.parse(labour);
-                      // workOrders[index].imagePath = imageUrl!;
 
                       bool updated = DatabaseHandler.UpdateWorkOrder(
                           trailer, workOrders[index]);
@@ -225,6 +225,15 @@ class _MyOrderState extends State<EditWorkOrder> {
                     },
                     child: const Text("Exit Work Order"),
                   ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final pdfData = await generateSingleWorkOrderPdf(
+                          trailer, workOrders[index], imageData);
+                      await Printing.layoutPdf(
+                          onLayout: (PdfPageFormat format) async => pdfData);
+                    },
+                    child: const Text("Generate PDF"),
+                  )
                 ],
               ),
             ),
